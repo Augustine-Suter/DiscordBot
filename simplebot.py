@@ -24,11 +24,18 @@ intents.members = True
 class SimpleBot(commands.Bot):
     def __init__(self):
         super().__init__(command_prefix=config['prefix'], intents=intents)
-    
+
     async def on_ready(self):
         print(f'Logged in as {self.user.name} (ID: {self.user.id})')
         print('------')
+        await self.load_cogs()
 
+    async def load_cogs(self):
+        for filename in os.listdir('./cogs'):
+            if filename.endswith('.py'):
+                await self.load_extension(f'cogs.{filename[:-3]}')
+
+                
 # Initialize  bot instance
 bot = SimpleBot()
 
