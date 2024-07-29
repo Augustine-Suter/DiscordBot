@@ -6,6 +6,7 @@ from datetime import datetime
 from discord.ext import commands
 import json
 import os
+import asyncio
 
 # Load the configuration from config.json
 if not os.path.isfile("config.json"):
@@ -29,28 +30,28 @@ class SimpleBot(commands.Bot):
         print(f'Logged in as {self.user.name} (ID: {self.user.id})')
         print('------')
         await self.load_cogs()
+        await self.send_startup_message()
 
     async def load_cogs(self):
         for filename in os.listdir('./cogs'):
             if filename.endswith('.py'):
                 await self.load_extension(f'cogs.{filename[:-3]}')
 
-                
+    async def send_startup_message(self):
+        status_channel_id = 1267317067753984116
+        status_channel = self.get_channel(status_channel_id)
+        if status_channel:
+            startup_embed = discord.Embed(title=f"Capstone Bot is now online", 
+                                          description=f"This bot has started properly", 
+                                          timestamp=datetime.now())
+            startup_embed.set_author(name="CapstoneBot")
+            await status_channel.send(embed=startup_embed)
+
+
 # Initialize  bot instance
 bot = SimpleBot()
 
-# Startup message
-@bot.event
-async def on_ready():
-    status_channel_id = 1267317067753984116
-    status_channel = bot.get_channel(status_channel_id)
-    if status_channel:
-        startup_embed = discord.Embed(title=f"Capstone Bot is now online", 
-                                        description=f"This bot has started properly", 
-                                        timestamp=datetime.now()
-                                        )
-        startup_embed.set_author(name="CapstoneBot")
-        await status_channel.send(embed=startup_embed)
+
 
 # Run the bot
 bot.run(config['token'])
