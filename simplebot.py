@@ -2,6 +2,7 @@
 # CSE485 Capstone
 
 import discord
+from datetime import datetime
 from discord.ext import commands
 import json
 import os
@@ -16,8 +17,8 @@ else:
 
 # Setup bot with required intents
 intents = discord.Intents.default()
-intents.messages = True
-intents.guilds = True
+intents.message_content = True
+intents.members = True
 
 # Define bot class
 class SimpleBot(commands.Bot):
@@ -30,6 +31,19 @@ class SimpleBot(commands.Bot):
 
 # Initialize  bot instance
 bot = SimpleBot()
+
+# Startup message
+@bot.event
+async def on_ready():
+    status_channel_id = 1267317067753984116
+    status_channel = bot.get_channel(status_channel_id)
+    if status_channel:
+        startup_embed = discord.Embed(title=f"Capstone Bot is now online", 
+                                        description=f"This bot has started properly", 
+                                        timestamp=datetime.now()
+                                        )
+        startup_embed.set_author(name="CapstoneBot")
+        await status_channel.send(embed=startup_embed)
 
 # Run the bot
 bot.run(config['token'])
